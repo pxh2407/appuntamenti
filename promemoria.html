@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Controllo appuntamenti…</title>
+<style>
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 24px;
+    background: #f5f6f8;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 90vh;
+    text-align: center;
+    padding: 20px;
+  }
+  .messaggio {
+    background: #e8f5e9;
+    border: 2px solid #1e7a3c;
+    border-radius: 12px;
+    padding: 30px 40px;
+    max-width: 600px;
+  }
+  button {
+    font-size: 22px;
+    font-family: inherit;
+    padding: 12px 30px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 8px;
+    background: #1a3a6b;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<div class="messaggio" id="msg" style="display:none">
+  <p>✅ <b>Nessun impegno né oggi né domani.</b></p>
+  <p style="font-size:19px; color:#666; margin-top:10px">Questa finestra si chiude da sola tra qualche secondo.</p>
+  <button onclick="window.close()">Chiudi adesso</button>
+</div>
+
+<script>
+let lista = [];
+try { lista = JSON.parse(localStorage.getItem('appuntamenti_v1')) || []; } catch {}
+
+const oggi = new Date().toLocaleDateString('sv-SE');
+const d = new Date(); d.setDate(d.getDate() + 1);
+const domani = d.toLocaleDateString('sv-SE');
+
+if (lista.some(a => a.data === oggi || a.data === domani)) {
+  // C'è qualcosa: mostra l'app vera
+  location.replace('index.html');
+} else {
+  // Niente in vista: avvisa e chiudi da solo
+  document.getElementById('msg').style.display = 'block';
+  setTimeout(() => window.close(), 5000);
+}
+</script>
+
+</body>
+</html>

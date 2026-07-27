@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📅 I Miei Appuntamenti</title>
+<style>
+  :root {
+    --blu: #1a3a6b;
+    --blu-chiaro: #eaf1fb;
+    --verde: #1e7a3c;
+    --rosso: #b02a2a;
+    --arancio: #b35c00;
+    --grigio: #666;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 20px;
+    background: #f5f6f8;
+    color: #1a1a1a;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  h1 {
+    text-align: center;
+    color: var(--blu);
+    font-size: 34px;
+    margin-bottom: 6px;
+  }
+  .sottotitolo {
+    text-align: center;
+    color: var(--grigio);
+    margin-bottom: 24px;
+    font-size: 18px;
+  }
+  .avviso-oggi {
+    background: #fff3cd;
+    border: 2px solid var(--arancio);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 21px;
+    display: none;
+  }
+  .avviso-oggi.tranquillo {
+    background: #e8f5e9;
+    border-color: var(--verde);
+  }
+  .scheda {
+    background: white;
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  }
+  .scheda h2 {
+    color: var(--blu);
+    font-size: 24px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--blu-chiaro);
+    padding-bottom: 8px;
+  }
+  label {
+    display: block;
+    font-weight: bold;
+    margin: 14px 0 6px;
+    color: var(--blu);
+  }
+  input, textarea {
+    width: 100%;
+    font-size: 20px;
+    font-family: inherit;
+    padding: 12px;
+    border: 2px solid #bbb;
+    border-radius: 8px;
+  }
+  input:focus, textarea:focus {
+    outline: 3px solid var(--blu);
+    border-color: var(--blu);
+  }
+  .riga-data { display: flex; gap: 16px; flex-wrap: wrap; }
+  .riga-data > div { flex: 1; min-width: 180px; }
+  button {
+    font-size: 21px;
+    font-family: inherit;
+    padding: 14px 26px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .btn-aggiungi {
+    background: var(--verde);
+    color: white;
+    width: 100%;
+    margin-top: 20px;
+  }
+  .btn-aggiungi:hover { background: #16612f; }
+  .btn-elimina {
+    background: white;
+    color: var(--rosso);
+    border: 2px solid var(--rosso);
+    font-size: 17px;
+    padding: 8px 14px;
+  }
+  .btn-elimina:hover { background: var(--rosso); color: white; }
+  .btn-modifica {
+    background: white;
+    color: var(--blu);
+    border: 2px solid var(--blu);
+    font-size: 17px;
+    padding: 8px 14px;
+  }
+  .btn-modifica:hover { background: var(--blu); color: white; }
+  .azioni { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+  .barra-strumenti { display: flex; gap: 14px; margin-bottom: 20px; }
+  .barra-strumenti button { flex: 1; }
+  .btn-stampa { background: var(--blu); color: white; }
+  .btn-stampa:hover { background: #12294d; }
+  .btn-suono { background: var(--arancio); color: white; }
+  .btn-suono:hover { background: #8f4a00; }
+  .btn-chiudi { background: white; color: var(--rosso); border: 2px solid var(--rosso); }
+  .btn-chiudi:hover { background: var(--rosso); color: white; }
+  .btn-annulla {
+    background: #777;
+    color: white;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .appuntamento {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    background: var(--blu-chiaro);
+    border-left: 6px solid var(--blu);
+  }
+  .appuntamento.oggi {
+    background: #fff3cd;
+    border-left-color: var(--arancio);
+  }
+  .appuntamento.passato {
+    background: #eee;
+    border-left-color: #999;
+    color: var(--grigio);
+  }
+  .app-quando { font-weight: bold; color: var(--blu); font-size: 19px; }
+  .appuntamento.oggi .app-quando { color: var(--arancio); }
+  .appuntamento.passato .app-quando { color: var(--grigio); }
+  .app-titolo { font-size: 22px; margin-top: 2px; }
+  .app-note { font-size: 18px; color: var(--grigio); margin-top: 2px; }
+  .etichetta {
+    display: inline-block;
+    background: var(--arancio);
+    color: white;
+    font-size: 15px;
+    padding: 2px 10px;
+    border-radius: 12px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .vuoto {
+    text-align: center;
+    color: var(--grigio);
+    padding: 20px;
+    font-style: italic;
+  }
+  @media print {
+    .scheda-form, .btn-elimina, .btn-modifica, .avviso-oggi, .barra-strumenti { display: none !important; }
+    body { background: white; }
+    .scheda { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>📅 I Miei Appuntamenti</h1>
+<p class="sottotitolo">I dati restano salvati su questo computer</p>
+
+<div class="avviso-oggi" id="avvisoOggi"></div>
+
+<div class="barra-strumenti">
+  <button class="btn-suono" onclick="suona()">🔔 Prova suono</button>
+  <button class="btn-stampa" onclick="window.print()">🖨️ Stampa elenco</button>
+  <button class="btn-chiudi" onclick="window.close()">❌ Chiudi</button>
+</div>
+
+<div class="scheda scheda-form">
+  <h2 id="titoloForm">➕ Nuovo appuntamento</h2>
+  <label for="titolo">Che cosa?</label>
+  <input type="text" id="titolo" placeholder="Es. Visita dal medico">
+  <div class="riga-data">
+    <div>
+      <label for="data">Giorno</label>
+      <input type="date" id="data">
+    </div>
+    <div>
+      <label for="ora">Ora</label>
+      <input type="time" id="ora">
+    </div>
+  </div>
+  <label for="note">Note (facoltative)</label>
+  <textarea id="note" rows="2" placeholder="Es. Portare le analisi"></textarea>
+  <button class="btn-aggiungi" id="btnSalva" onclick="aggiungi()">✅ Aggiungi appuntamento</button>
+  <button class="btn-annulla" id="btnAnnulla" onclick="svuotaForm()" style="display:none">↩️ Annulla modifica</button>
+</div>
+
+<div class="scheda">
+  <h2>🗓️ Prossimi appuntamenti</h2>
+  <div id="listaFuturi"><p class="vuoto">Nessun appuntamento in programma.</p></div>
+</div>
+
+<div class="scheda">
+  <h2>🕰️ Appuntamenti passati</h2>
+  <div id="listaPassati"><p class="vuoto">Nessun appuntamento passato.</p></div>
+</div>
+
+<script>
+const CHIAVE = 'appuntamenti_v1';
+const GIORNI = ['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
+const MESI = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+let giaAvvisati = new Set();
+
+function carica() {
+  try { return JSON.parse(localStorage.getItem(CHIAVE)) || []; }
+  catch { return []; }
+}
+function salva(lista) {
+  localStorage.setItem(CHIAVE, JSON.stringify(lista));
+}
+
+let idInModifica = null;
+
+function aggiungi() {
+  const titolo = document.getElementById('titolo').value.trim();
+  const data = document.getElementById('data').value;
+  const ora = document.getElementById('ora').value;
+  const note = document.getElementById('note').value.trim();
+  if (!titolo) { alert('Scrivi che cosa devi fare.'); return; }
+  if (!data) { alert('Scegli il giorno.'); return; }
+  const lista = carica();
+  if (idInModifica) {
+    const a = lista.find(x => x.id === idInModifica);
+    if (a) { a.titolo = titolo; a.data = data; a.ora = ora; a.note = note; }
+  } else {
+    lista.push({ id: Date.now(), titolo, data, ora, note });
+  }
+  salva(lista);
+  svuotaForm();
+  mostra();
+}
+
+function modifica(id) {
+  const a = carica().find(x => x.id === id);
+  if (!a) return;
+  idInModifica = id;
+  document.getElementById('titolo').value = a.titolo;
+  document.getElementById('data').value = a.data;
+  document.getElementById('ora').value = a.ora || '';
+  document.getElementById('note').value = a.note || '';
+  document.getElementById('titoloForm').textContent = '✏️ Modifica appuntamento';
+  document.getElementById('btnSalva').textContent = '💾 Salva modifica';
+  document.getElementById('btnAnnulla').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function svuotaForm() {
+  idInModifica = null;
+  document.getElementById('titolo').value = '';
+  document.getElementById('data').value = '';
+  document.getElementById('ora').value = '';
+  document.getElementById('note').value = '';
+  document.getElementById('titoloForm').textContent = '➕ Nuovo appuntamento';
+  document.getElementById('btnSalva').textContent = '✅ Aggiungi appuntamento';
+  document.getElementById('btnAnnulla').style.display = 'none';
+}
+
+function elimina(id) {
+  const lista = carica();
+  const app = lista.find(a => a.id === id);
+  if (!confirm('Eliminare "' + app.titolo + '"?')) return;
+  salva(lista.filter(a => a.id !== id));
+  if (id === idInModifica) svuotaForm();
+  mostra();
+}
+
+function dataLeggibile(iso, ora) {
+  const [a, m, g] = iso.split('-').map(Number);
+  const d = new Date(a, m - 1, g);
+  const oggi = new Date(); oggi.setHours(0,0,0,0);
+  const diff = Math.round((d - oggi) / 86400000);
+  let testo = GIORNI[d.getDay()] + ' ' + g + ' ' + MESI[m-1] + ' ' + a;
+  if (diff === 0) testo = 'OGGI — ' + testo;
+  else if (diff === 1) testo = 'DOMANI — ' + testo;
+  if (ora) testo += ' alle ' + ora;
+  return testo;
+}
+
+function mostra() {
+  const lista = carica().sort((x, y) =>
+    (x.data + (x.ora || '')) < (y.data + (y.ora || '')) ? -1 : 1);
+  const oggiISO = new Date().toLocaleDateString('sv-SE');
+  const futuri = lista.filter(a => a.data >= oggiISO);
+  const passati = lista.filter(a => a.data < oggiISO).reverse();
+
+  document.getElementById('listaFuturi').innerHTML =
+    futuri.length ? futuri.map(a => rendi(a, a.data === oggiISO ? 'oggi' : '')).join('')
+    : '<p class="vuoto">Nessun appuntamento in programma.</p>';
+  document.getElementById('listaPassati').innerHTML =
+    passati.length ? passati.map(a => rendi(a, 'passato')).join('')
+    : '<p class="vuoto">Nessun appuntamento passato.</p>';
+
+  const dDomani = new Date(); dDomani.setDate(dDomani.getDate() + 1);
+  const domaniISO = dDomani.toLocaleDateString('sv-SE');
+  const diOggi = futuri.filter(a => a.data === oggiISO);
+  const diDomani = futuri.filter(a => a.data === domaniISO);
+  const avviso = document.getElementById('avvisoOggi');
+  avviso.style.display = 'block';
+  const elenco = l => l.map(a => proteggi(a.titolo) + (a.ora ? ' alle ' + a.ora : '')).join(' • ');
+  if (diOggi.length || diDomani.length) {
+    avviso.classList.remove('tranquillo');
+    let testo = '';
+    if (diOggi.length) testo += '🔔 <b>OGGI:</b> ' + elenco(diOggi);
+    if (diDomani.length) testo += (testo ? '<br>' : '') + '📌 <b>DOMANI:</b> ' + elenco(diDomani);
+    avviso.innerHTML = testo;
+  } else {
+    avviso.classList.add('tranquillo');
+    avviso.innerHTML = '✅ Nessun impegno né oggi né domani.';
+  }
+}
+
+function rendi(a, classe) {
+  const eOggi = classe === 'oggi';
+  return '<div class="appuntamento ' + classe + '">' +
+    '<div>' +
+      '<div class="app-quando">' + dataLeggibile(a.data, a.ora) +
+        (eOggi ? '<span class="etichetta">OGGI</span>' : '') + '</div>' +
+      '<div class="app-titolo">' + proteggi(a.titolo) + '</div>' +
+      (a.note ? '<div class="app-note">📝 ' + proteggi(a.note) + '</div>' : '') +
+    '</div>' +
+    '<div class="azioni">' +
+      '<button class="btn-modifica" onclick="modifica(' + a.id + ')">✏️ Modifica</button>' +
+      '<button class="btn-elimina" onclick="elimina(' + a.id + ')">🗑️ Elimina</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function proteggi(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Con la pagina aperta: avviso 30 minuti prima dell'orario
+// Suono di campanella generato dal browser: nessun file da scaricare
+let ctxAudio = null;
+let suonoDaRecuperare = 0;
+
+function suona(rintocchi = 3) {
+  try {
+    if (!ctxAudio) ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
+    // I browser bloccano l'audio finché non si tocca la pagina: in tal caso
+    // il suono viene rimandato al primo clic o tasto premuto.
+    if (ctxAudio.state === 'suspended') {
+      ctxAudio.resume();
+      if (ctxAudio.state === 'suspended') { suonoDaRecuperare = rintocchi; return; }
+    }
+    for (let i = 0; i < rintocchi; i++) {
+      const inizio = ctxAudio.currentTime + i * 0.55;
+      [880, 1320].forEach((frequenza, n) => {
+        const osc = ctxAudio.createOscillator();
+        const vol = ctxAudio.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = frequenza;
+        vol.gain.setValueAtTime(n === 0 ? 0.35 : 0.12, inizio);
+        vol.gain.exponentialRampToValueAtTime(0.0001, inizio + 0.5);
+        osc.connect(vol); vol.connect(ctxAudio.destination);
+        osc.start(inizio); osc.stop(inizio + 0.5);
+      });
+    }
+  } catch (e) { /* se l'audio non è disponibile, resta l'avviso scritto */ }
+}
+
+function recuperaSuono() {
+  if (!suonoDaRecuperare) return;
+  const n = suonoDaRecuperare;
+  suonoDaRecuperare = 0;
+  suona(n);
+}
+document.addEventListener('click', recuperaSuono);
+document.addEventListener('keydown', recuperaSuono);
+
+function controllaPromemoria() {
+  const ora = new Date();
+  const oggiISO = ora.toLocaleDateString('sv-SE');
+  for (const a of carica()) {
+    if (a.data !== oggiISO || !a.ora || giaAvvisati.has(a.id)) continue;
+    const [h, m] = a.ora.split(':').map(Number);
+    const quando = new Date(); quando.setHours(h, m, 0, 0);
+    const minuti = (quando - ora) / 60000;
+    if (minuti > 0 && minuti <= 30) {
+      giaAvvisati.add(a.id);
+      suona();
+      setTimeout(() => alert('🔔 PROMEMORIA\n\nTra ' + Math.round(minuti) + ' minuti: ' +
+        a.titolo + ' (alle ' + a.ora + ')'), 300);
+    }
+  }
+}
+
+mostra();
+// All'apertura la campanella suona solo se ci sono impegni oggi o domani
+if (!document.getElementById('avvisoOggi').classList.contains('tranquillo')) suona(2);
+setInterval(controllaPromemoria, 60000);
+controllaPromemoria();
+</script>
+
+</body>
+</html>
