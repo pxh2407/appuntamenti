@@ -203,7 +203,7 @@
 <body>
 
 <h1>📅 I Miei Appuntamenti</h1>
-<p class="sottotitolo">I dati restano salvati su questo computer</p>
+<p class="sottotitolo">I dati restano salvati su questo dispositivo</p>
 
 <div class="avviso-oggi" id="avvisoOggi"></div>
 
@@ -414,33 +414,50 @@ function proteggi(t) {
 let ctxAudio = null;
 let suonoDaRecuperare = 0;
 
+function rintocca(rintocchi) {
+  for (let i = 0; i < rintocchi; i++) {
+    const inizio = ctxAudio.currentTime + i * 0.55;
+    [880, 1320].forEach((frequenza, n) => {
+      const osc = ctxAudio.createOscillator();
+      const vol = ctxAudio.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = frequenza;
+      vol.gain.setValueAtTime(n === 0 ? 0.35 : 0.12, inizio);
+      vol.gain.exponentialRampToValueAtTime(0.0001, inizio + 0.5);
+      osc.connect(vol); vol.connect(ctxAudio.destination);
+      osc.start(inizio); osc.stop(inizio + 0.5);
+    });
+  }
+}
+
 function suona(rintocchi = 3) {
   try {
     if (!ctxAudio) ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
-    // I browser bloccano l'audio finché non si tocca la pagina: in tal caso
-    // il suono viene rimandato al primo clic o tasto premuto.
+    // I telefoni tengono l'audio spento finché non si tocca lo schermo:
+    // in quel caso il suono viene rimandato al primo tocco.
     if (ctxAudio.state === 'suspended') {
-      ctxAudio.resume();
-      if (ctxAudio.state === 'suspended') { suonoDaRecuperare = rintocchi; return; }
+      suonoDaRecuperare = rintocchi;
+      ctxAudio.resume().then(() => {
+        if (ctxAudio.state === 'running' && suonoDaRecuperare) {
+          const n = suonoDaRecuperare;
+          suonoDaRecuperare = 0;
+          rintocca(n);
+        }
+      }).catch(() => {});
+      return;
     }
-    for (let i = 0; i < rintocchi; i++) {
-      const inizio = ctxAudio.currentTime + i * 0.55;
-      [880, 1320].forEach((frequenza, n) => {
-        const osc = ctxAudio.createOscillator();
-        const vol = ctxAudio.createGain();
-        osc.type = 'sine';
-        osc.frequency.value = frequenza;
-        vol.gain.setValueAtTime(n === 0 ? 0.35 : 0.12, inizio);
-        vol.gain.exponentialRampToValueAtTime(0.0001, inizio + 0.5);
-        osc.connect(vol); vol.connect(ctxAudio.destination);
-        osc.start(inizio); osc.stop(inizio + 0.5);
-      });
-    }
+    rintocca(rintocchi);
   } catch (e) { /* se l'audio non è disponibile, resta l'avviso scritto */ }
 }
 
 function recuperaSuono() {
   if (!suonoDaRecuperare) return;
+  // Su iPhone un contesto audio nato fuori da un tocco resta muto per sempre:
+  // qui siamo dentro il tocco, quindi lo si butta e se ne crea uno nuovo.
+  if (ctxAudio && ctxAudio.state === 'suspended') {
+    try { ctxAudio.close(); } catch (e) {}
+    ctxAudio = null;
+  }
   const n = suonoDaRecuperare;
   suonoDaRecuperare = 0;
   suona(n);
