@@ -129,6 +129,16 @@
   .btn-stampa:hover { background: #12294d; }
   .btn-suono { background: var(--arancio); color: white; }
   .btn-suono:hover { background: #8f4a00; }
+  .esito-suono {
+    display: none;
+    font-size: 18px;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border: 2px solid;
+  }
+  .esito-suono.ok { background: #e8f5e9; border-color: var(--verde); color: #12522a; }
+  .esito-suono.muto { background: #fdecea; border-color: var(--rosso); color: #7d1d1d; }
   .btn-chiudi { background: white; color: var(--rosso); border: 2px solid var(--rosso); }
   .btn-chiudi:hover { background: var(--rosso); color: white; }
   .btn-annulla {
@@ -208,10 +218,11 @@
 <div class="avviso-oggi" id="avvisoOggi"></div>
 
 <div class="barra-strumenti">
-  <button class="btn-suono" onclick="suona()">🔔 Prova suono</button>
+  <button class="btn-suono" onclick="provaSuono()">🔔 Prova suono</button>
   <button class="btn-stampa" onclick="window.print()">🖨️ Stampa elenco</button>
   <button class="btn-chiudi" onclick="window.close()">❌ Chiudi</button>
 </div>
+<div class="esito-suono" id="esitoSuono"></div>
 
 <div class="scheda scheda-form">
   <h2 id="titoloForm">➕ Nuovo appuntamento</h2>
@@ -448,6 +459,28 @@ function suona(rintocchi = 3) {
     }
     rintocca(rintocchi);
   } catch (e) { /* se l'audio non è disponibile, resta l'avviso scritto */ }
+}
+
+// Prova del suono con riscontro scritto: serve a capire se è muto il browser
+// (audio bloccato) oppure il telefono (suoneria abbassata o silenziosa).
+function provaSuono() {
+  const esito = document.getElementById('esitoSuono');
+  esito.style.display = 'block';
+  if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+  suona();
+  setTimeout(() => {
+    const stato = ctxAudio ? ctxAudio.state : 'assente';
+    if (stato === 'running') {
+      esito.className = 'esito-suono ok';
+      esito.innerHTML = '✅ <b>La campanella è partita.</b> Se non l\'hai sentita, ' +
+        'alza il volume del dispositivo e controlla che non sia in modalità silenziosa ' +
+        '(sull\'iPhone è l\'interruttore sul fianco). Poi riprova.';
+    } else {
+      esito.className = 'esito-suono muto';
+      esito.innerHTML = '⚠️ <b>Il browser tiene l\'audio spento</b> (stato: ' + stato + '). ' +
+        'Tocca un punto qualsiasi della pagina e premi di nuovo 🔔 Prova suono.';
+    }
+  }, 400);
 }
 
 function recuperaSuono() {
