@@ -113,6 +113,14 @@
     font-size: 17px;
     padding: 8px 14px;
   }
+  .btn-google {
+    background: white;
+    color: var(--verde);
+    border: 2px solid var(--verde);
+    font-size: 17px;
+    padding: 8px 14px;
+  }
+  .btn-google:hover { background: var(--verde); color: white; }
   .btn-modifica:hover { background: var(--blu); color: white; }
   .azioni { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
   .barra-strumenti { display: flex; gap: 14px; margin-bottom: 20px; }
@@ -182,7 +190,7 @@
     }
     .appuntamento { flex-direction: column; align-items: stretch; }
     .azioni { flex-direction: row; }
-    .azioni button { flex: 1; padding: 12px; font-size: 18px; }
+    .azioni button { flex: 1; padding: 12px 4px; font-size: 16px; white-space: nowrap; }
     .riga-data > div { min-width: 100%; }
   }
   @media print {
@@ -359,10 +367,42 @@ function rendi(a, classe) {
       (a.note ? '<div class="app-note">📝 ' + proteggi(a.note) + '</div>' : '') +
     '</div>' +
     '<div class="azioni">' +
+      '<button class="btn-google" onclick="inviaAGoogle(' + a.id + ')" ' +
+        'title="Apre Google Calendar già compilato: ti basta premere Salva">📆 Google</button>' +
       '<button class="btn-modifica" onclick="modifica(' + a.id + ')">✏️ Modifica</button>' +
       '<button class="btn-elimina" onclick="elimina(' + a.id + ')">🗑️ Elimina</button>' +
     '</div>' +
   '</div>';
+}
+
+// Apre Google Calendar con l'appuntamento già compilato: l'utente preme solo "Salva".
+// Da lì in poi l'evento è sincronizzato su tutti i suoi dispositivi.
+function inviaAGoogle(id) {
+  const a = carica().find(x => x.id === id);
+  if (!a) return;
+  const senzaTrattini = a.data.replace(/-/g, '');
+  let periodo;
+  if (a.ora) {
+    const [h, m] = a.ora.split(':').map(Number);
+    const inizio = new Date(a.data + 'T' + a.ora + ':00');
+    const fine = new Date(inizio.getTime() + 3600000); // dura un'ora
+    const perGoogle = d => d.getFullYear() +
+      String(d.getMonth() + 1).padStart(2, '0') +
+      String(d.getDate()).padStart(2, '0') + 'T' +
+      String(d.getHours()).padStart(2, '0') +
+      String(d.getMinutes()).padStart(2, '0') + '00';
+    periodo = perGoogle(inizio) + '/' + perGoogle(fine);
+  } else {
+    const giornoDopo = new Date(a.data + 'T12:00:00');
+    giornoDopo.setDate(giornoDopo.getDate() + 1);
+    periodo = senzaTrattini + '/' + giornoDopo.toLocaleDateString('sv-SE').replace(/-/g, '');
+  }
+  const indirizzo = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+    '&text=' + encodeURIComponent(a.titolo) +
+    '&dates=' + periodo +
+    '&ctz=Europe/Rome' +
+    (a.note ? '&details=' + encodeURIComponent(a.note) : '');
+  window.open(indirizzo, '_blank');
 }
 
 function proteggi(t) {
