@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Promemoria con Google Calendar — guida</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: #f5f6f8;
+    color: #1a1a1a;
+    padding: 20px;
+  }
+  .foglio {
+    background: white;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 12mm 14mm;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  h1 {
+    text-align: center;
+    color: #1a3a6b;
+    font-size: 29px;
+    margin-bottom: 2px;
+  }
+  .sotto {
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  td {
+    border-bottom: 2px solid #e0e6ef;
+    padding: 10px 8px;
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  .numero { width: 82px; text-align: center; }
+  .pallino {
+    display: inline-block;
+    width: 54px;
+    height: 54px;
+    line-height: 54px;
+    border-radius: 50%;
+    background: #1a3a6b;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  .pallino.verde { background: #1e7a3c; }
+  .nome {
+    font-size: 19.5px;
+    font-weight: bold;
+    color: #1a3a6b;
+    margin-bottom: 2px;
+  }
+  .descr { font-size: 16px; line-height: 1.35; }
+  .tasto {
+    display: inline-block;
+    background: #eaf1fb;
+    border: 1px solid #1a3a6b;
+    border-radius: 6px;
+    padding: 1px 8px;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+  .tasto.verde { background: #e8f5e9; border-color: #1e7a3c; }
+  .avvisi {
+    margin-top: 12px;
+    border: 2px solid #1a3a6b;
+    border-radius: 10px;
+    padding: 10px 16px;
+    background: #eaf1fb;
+  }
+  .avvisi h3 { color: #1a3a6b; font-size: 19px; margin-bottom: 6px; }
+  .avvisi li { font-size: 15.5px; line-height: 1.45; margin-left: 22px; }
+  .nota {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+  }
+  .btn-stampa {
+    display: block;
+    margin: 20px auto;
+    font-size: 22px;
+    font-family: inherit;
+    font-weight: bold;
+    padding: 14px 40px;
+    border: none;
+    border-radius: 8px;
+    background: #1a3a6b;
+    color: white;
+    cursor: pointer;
+  }
+  @media print {
+    body { background: white; padding: 0; }
+    .foglio { box-shadow: none; max-width: none; padding: 0; }
+    .btn-stampa { display: none; }
+    @page { size: A4; margin: 10mm; }
+  }
+</style>
+</head>
+<body>
+
+<button class="btn-stampa" onclick="window.print()">🖨️ Stampa la guida</button>
+
+<div class="foglio">
+<h1>🔔 Farsi avvisare da Google Calendar</h1>
+<p class="sotto">Dall'app "I Miei Appuntamenti" alla sveglia sul telefono, passo per passo</p>
+
+<table>
+  <tr>
+    <td class="numero"><span class="pallino">1</span></td>
+    <td>
+      <div class="nome">Scrivi l'appuntamento nell'app</div>
+      <div class="descr">Apri <b>I Miei Appuntamenti</b> (icona sul Desktop o il sito dal telefono), indica cosa devi fare, il giorno e l'ora, poi premi <span class="tasto verde">✅ Aggiungi appuntamento</span>.</div>
+    </td>
+  </tr>
+  <tr>
+    <td class="numero"><span class="pallino">2</span></td>
+    <td>
+      <div class="nome">Premi il pulsante verde Google</div>
+      <div class="descr">Accanto all'appuntamento appena creato premi <span class="tasto verde">📆 Google</span>. Si apre una nuova scheda di Google Calendar con <b>tutto già compilato</b>: non devi riscrivere nulla.</div>
+    </td>
+  </tr>
+  <tr>
+    <td class="numero"><span class="pallino">3</span></td>
+    <td>
+      <div class="nome">Scegli quanto tempo prima farti avvisare</div>
+      <div class="descr">Prima di salvare, cerca la voce <span class="tasto">Aggiungi notifica</span> e scegli il preavviso: <b>1 ora</b>, <b>1 giorno</b>, come preferisci. Puoi metterne <b>due</b>: una il giorno prima e una poco prima dell'ora.</div>
+    </td>
+  </tr>
+  <tr>
+    <td class="numero"><span class="pallino">4</span></td>
+    <td>
+      <div class="nome">Vuoi anche una email? (facoltativo)</div>
+      <div class="descr">Accanto alla notifica c'è un menù a tendina con scritto <span class="tasto">Notifica</span>: cambialo in <span class="tasto">Email</span> e il promemoria ti arriverà anche sulla posta.</div>
+    </td>
+  </tr>
+  <tr>
+    <td class="numero"><span class="pallino verde">5</span></td>
+    <td>
+      <div class="nome">PREMI SALVA — è il passaggio decisivo</div>
+      <div class="descr">In alto trovi il pulsante blu <span class="tasto">Salva</span>: <b>finché non lo premi, l'appuntamento non esiste</b> per Google e non riceverai nessun avviso. È l'errore più facile da fare.</div>
+    </td>
+  </tr>
+  <tr>
+    <td class="numero"><span class="pallino verde">✓</span></td>
+    <td>
+      <div class="nome">Fatto: ora sei avvisato dappertutto</div>
+      <div class="descr">L'appuntamento compare sul <b>telefono e sul computer</b>, e all'ora stabilita Google suona e mostra un avviso scritto <b>anche a telefono bloccato</b>. Per rivedere tutto, il pulsante <span class="tasto verde">📅 Apri Google Calendar</span> nell'app.</div>
+    </td>
+  </tr>
+</table>
+
+<div class="avvisi">
+  <h3>💡 Da sapere sugli avvisi</h3>
+  <ul>
+    <li><b>Avviso sullo schermo con suono:</b> arriva sempre, senza dover impostare nulla.</li>
+    <li><b>Email:</b> solo se la scegli tu al passo 4.</li>
+    <li><b>SMS:</b> Google non li manda più da anni, non aspettarli.</li>
+    <li>Se non scegli niente, Google avvisa <b>10 minuti prima</b>: spesso troppo pochi, meglio impostare il preavviso al passo 3.</li>
+    <li>L'elenco dentro l'app resta <b>separato</b> tra computer e telefono: quello valido per tutti i dispositivi è Google Calendar.</li>
+  </ul>
+</div>
+
+<p class="nota">Guida per l'app "I Miei Appuntamenti" — pxh2407.github.io/appuntamenti</p>
+</div>
+
+<button class="btn-stampa" onclick="window.print()">🖨️ Stampa la guida</button>
+
+</body>
+</html>
