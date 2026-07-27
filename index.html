@@ -170,6 +170,21 @@
     padding: 20px;
     font-style: italic;
   }
+  /* Telefono: pulsanti e righe più comodi sugli schermi stretti */
+  @media (max-width: 560px) {
+    body { padding: 12px; font-size: 19px; }
+    h1 { font-size: 28px; }
+    .barra-strumenti { flex-wrap: wrap; }
+    .barra-strumenti button {
+      flex: 1 1 100%;
+      padding: 14px 10px;
+      white-space: nowrap;
+    }
+    .appuntamento { flex-direction: column; align-items: stretch; }
+    .azioni { flex-direction: row; }
+    .azioni button { flex: 1; padding: 12px; font-size: 18px; }
+    .riga-data > div { min-width: 100%; }
+  }
   @media print {
     .scheda-form, .btn-elimina, .btn-modifica, .avviso-oggi, .barra-strumenti { display: none !important; }
     body { background: white; }
