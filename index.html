@@ -129,6 +129,19 @@
   .btn-stampa:hover { background: #12294d; }
   .btn-suono { background: var(--arancio); color: white; }
   .btn-suono:hover { background: #8f4a00; }
+  .btn-google-apri { background: var(--verde); color: white; }
+  .btn-google-apri:hover { background: #16612f; }
+  .spiega-google {
+    font-size: 16px;
+    color: #444;
+    background: #e8f5e9;
+    border-left: 6px solid var(--verde);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    line-height: 1.4;
+    text-align: left;
+  }
   .esito-suono {
     display: none;
     font-size: 18px;
@@ -218,6 +231,7 @@
 <div class="avviso-oggi" id="avvisoOggi"></div>
 
 <div class="barra-strumenti">
+  <button class="btn-google-apri" onclick="window.open('https://calendar.google.com/', '_blank')">📅 Apri Google Calendar</button>
   <button class="btn-suono" onclick="provaSuono()">🔔 Prova suono</button>
   <button class="btn-stampa" onclick="window.print()">🖨️ Stampa elenco</button>
   <button class="btn-chiudi" onclick="window.close()">❌ Chiudi</button>
@@ -344,7 +358,12 @@ function mostra() {
 
   document.getElementById('listaFuturi').innerHTML =
     futuri.length ? futuri.map(a => rendi(a, a.data === oggiISO ? 'oggi' : '')).join('')
-    : '<p class="vuoto">Nessun appuntamento in programma.</p>';
+    : '<p class="vuoto">Nessun appuntamento in programma su questo dispositivo.</p>' +
+      '<p class="spiega-google">📅 <b>Cerchi un appuntamento che non trovi qui?</b> ' +
+      'Questo elenco vive solo su questo dispositivo: gli appuntamenti scritti sul ' +
+      'computer non compaiono sul telefono, e viceversa. Quelli che hai salvato su ' +
+      'Google Calendar li trovi invece dappertutto, col pulsante verde ' +
+      '<b>📅 Apri Google Calendar</b> qui sopra.</p>';
   document.getElementById('listaPassati').innerHTML =
     passati.length ? passati.map(a => rendi(a, 'passato')).join('')
     : '<p class="vuoto">Nessun appuntamento passato.</p>';
