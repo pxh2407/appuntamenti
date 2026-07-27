@@ -413,7 +413,20 @@ function inviaAGoogle(id) {
     '&dates=' + periodo +
     '&ctz=Europe/Rome' +
     (a.note ? '&details=' + encodeURIComponent(a.note) : '');
-  window.open(indirizzo, '_blank');
+  const finestra = window.open(indirizzo, '_blank');
+  const esito = document.getElementById('esitoSuono');
+  esito.style.display = 'block';
+  if (finestra) {
+    esito.className = 'esito-suono ok';
+    esito.innerHTML = '📆 <b>Si è aperta la scheda di Google Calendar.</b> ' +
+      'Adesso devi premere il pulsante blu <b>SALVA</b> in alto: se non lo premi, ' +
+      'l\'appuntamento <b>non viene registrato</b> e non lo vedrai sul telefono.';
+  } else {
+    esito.className = 'esito-suono muto';
+    esito.innerHTML = '⚠️ <b>Il browser ha bloccato l\'apertura di Google Calendar.</b> ' +
+      'Cerca in alto a destra l\'avviso sulle finestre pop-up e scegli di consentirle, ' +
+      'poi premi di nuovo 📆 Google.';
+  }
 }
 
 function proteggi(t) {
