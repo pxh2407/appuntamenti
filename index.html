@@ -424,23 +424,17 @@ function rendi(a, classe) {
 function inviaAGoogle(id) {
   const a = carica().find(x => x.id === id);
   if (!a) return;
-  const senzaTrattini = a.data.replace(/-/g, '');
-  let periodo;
-  if (a.ora) {
-    const [h, m] = a.ora.split(':').map(Number);
-    const inizio = new Date(a.data + 'T' + a.ora + ':00');
-    const fine = new Date(inizio.getTime() + 3600000); // dura un'ora
-    const perGoogle = d => d.getFullYear() +
-      String(d.getMonth() + 1).padStart(2, '0') +
-      String(d.getDate()).padStart(2, '0') + 'T' +
-      String(d.getHours()).padStart(2, '0') +
-      String(d.getMinutes()).padStart(2, '0') + '00';
-    periodo = perGoogle(inizio) + '/' + perGoogle(fine);
-  } else {
-    const giornoDopo = new Date(a.data + 'T12:00:00');
-    giornoDopo.setDate(giornoDopo.getDate() + 1);
-    periodo = senzaTrattini + '/' + giornoDopo.toLocaleDateString('sv-SE').replace(/-/g, '');
-  }
+  // Sempre un orario preciso, mai un evento di giornata intera: in quel formato
+  // Google allunga l'evento oltre il giorno giusto. Senza ora si usano le 9:00.
+  const oraUsata = a.ora || '09:00';
+  const inizio = new Date(a.data + 'T' + oraUsata + ':00');
+  const fine = new Date(inizio.getTime() + 3600000); // dura un'ora
+  const perGoogle = d => d.getFullYear() +
+    String(d.getMonth() + 1).padStart(2, '0') +
+    String(d.getDate()).padStart(2, '0') + 'T' +
+    String(d.getHours()).padStart(2, '0') +
+    String(d.getMinutes()).padStart(2, '0') + '00';
+  const periodo = perGoogle(inizio) + '/' + perGoogle(fine);
   const indirizzo = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
     '&text=' + encodeURIComponent(a.titolo) +
     '&dates=' + periodo +
@@ -451,8 +445,10 @@ function inviaAGoogle(id) {
   esito.style.display = 'block';
   if (finestra) {
     esito.className = 'esito-suono ok';
-    esito.innerHTML = '📆 <b>Si è aperta la scheda di Google Calendar.</b> ' +
-      'Adesso devi premere il pulsante blu <b>SALVA</b> in alto: se non lo premi, ' +
+    esito.innerHTML = '📆 <b>Si è aperta la scheda di Google Calendar</b> con: ' +
+      '<b>' + proteggi(a.titolo) + '</b>, ' + dataLeggibile(a.data, oraUsata) +
+      (a.ora ? '' : ' <i>(orario non indicato: propone le 9:00)</i>') + '.<br>' +
+      'Controlla che sia giusto e premi il pulsante blu <b>SALVA</b> in alto: se non lo premi, ' +
       'l\'appuntamento <b>non viene registrato</b> e non lo vedrai sul telefono.';
   } else {
     esito.className = 'esito-suono muto';
