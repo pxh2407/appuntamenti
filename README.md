@@ -11,11 +11,13 @@ Apri `index.html` con un doppio clic.
 - **🖨️ Stampa elenco** per averlo su carta
 - **🔔 Prova suono** per verificare l'avviso sonoro
 
-## Il calendario di Google dentro l'app
+## Il rapporto con Google Calendar
 
-La sezione **📅 Il tuo Google Calendar** mostra gli appuntamenti veri, quelli sincronizzati fra computer e telefono. La prima volta chiede l'indirizzo Gmail, che resta salvato **solo sul dispositivo in uso**: non è scritto dentro il programma, così non finisce online.
+Il pulsante **📆 Google** accanto a ogni appuntamento lo porta dentro Google Calendar, con titolo, data e note già compilati: basta premere *Salva*. Da quel momento l'appuntamento è sincronizzato su tutti i dispositivi e avvisa anche a telefono bloccato.
 
-Il pulsante **📆 Google** accanto a ogni appuntamento lo porta invece dentro Google Calendar, con titolo, data e note già compilati: basta premere *Salva*.
+Il pulsante **📅 Vedi i miei appuntamenti su Google** apre il calendario vero e proprio (sul telefono l'app di Google).
+
+L'app non incorpora il calendario nella pagina: sui telefoni Google blocca i cookie di terze parti e il riquadro resterebbe vuoto. Meglio un pulsante che funziona sempre.
 
 ## Avvisi
 
