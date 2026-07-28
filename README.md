@@ -11,6 +11,12 @@ Apri `index.html` con un doppio clic.
 - **🖨️ Stampa elenco** per averlo su carta
 - **🔔 Prova suono** per verificare l'avviso sonoro
 
+## Il calendario di Google dentro l'app
+
+La sezione **📅 Il tuo Google Calendar** mostra gli appuntamenti veri, quelli sincronizzati fra computer e telefono. La prima volta chiede l'indirizzo Gmail, che resta salvato **solo sul dispositivo in uso**: non è scritto dentro il programma, così non finisce online.
+
+Il pulsante **📆 Google** accanto a ogni appuntamento lo porta invece dentro Google Calendar, con titolo, data e note già compilati: basta premere *Salva*.
+
 ## Avvisi
 
 - Riquadro giallo con gli impegni di **oggi** e di **domani** all'apertura
